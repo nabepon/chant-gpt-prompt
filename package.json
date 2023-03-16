@@ -1,6 +1,6 @@
 {
-  "name": "gpt-prompter",
-  "version": "0.1.0",
+  "name": "chant-gpt-prompt",
+  "version": "0.1.1",
   "description": "ChatGPT Prompt Extension",
   "main": "index.js",
   "scripts": {
@@ -13,17 +13,35 @@
   "author": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nabepon/gpt-prompter.git"
+    "url": "https://github.com/nabepon/chant-gpt-prompt.git"
   },
   "dependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.124",
+    "@mui/material": "^5.11.13",
+    "@types/react-syntax-highlighter": "^15.5.6",
+    "framer-motion": "^10.6.0",
+    "immer": "^9.0.19",
+    "lodash.debounce": "^4.0.8",
+    "mui-markdown": "^0.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.5",
+    "react-markdown": "^8.0.6",
+    "react-syntax-highlighter": "^15.5.0",
+    "recoil": "^0.7.7",
+    "remark-gfm": "^3.0.1",
+    "turndown": "^7.1.1"
   },
   "devDependencies": {
-    "@types/chrome": "0.0.158",
+    "@types/chrome": "^0.0.224",
     "@types/jest": "^27.0.2",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/turndown": "^5.0.1",
     "copy-webpack-plugin": "^9.0.1",
     "glob": "^7.1.6",
     "jest": "^27.2.1",

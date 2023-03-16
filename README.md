@@ -1,4 +1,4 @@
-# GPT Prompter
+# Chant-GPT_Prompt
 
 Chrome Extension
 
