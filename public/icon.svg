@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <rect x="64" y="96" width="384" height="272" rx="32" ry="32" fill="#00B4DB"/>
+    <path d="M428,96H84a32.07,32.07,0,0,0-32,32V416a32.07,32.07,0,0,0,32,32H428a32.07,32.07,0,0,0,32-32V128A32.07,32.07,0,0,0,428,96Zm-2,312a16.01,16.01,0,0,1-16,16H106a16.01,16.01,0,0,1-16-16V152a16.01,16.01,0,0,1,16-16H410a16.01,16.01,0,0,1,16,16Z" fill="#fff"/>
+    <text transform="translate(256 260)" font-size="200" font-weight="bold" fill="#fff" text-anchor="middle">C</text>
+    <text transform="translate(256 355)" font-size="200" font-weight="bold" fill="#fff" text-anchor="middle">A</text>
+    <text transform="translate(256 450)" font-size="200" font-weight="bold" fill="#fff" text-anchor="middle">T</text>
+</svg>
