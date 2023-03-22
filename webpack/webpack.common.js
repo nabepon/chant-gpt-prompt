@@ -2,6 +2,7 @@ const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const srcDir = path.join(__dirname, "..", "src");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
     entry: {
@@ -12,13 +13,14 @@ module.exports = {
     output: {
         path: path.join(__dirname, "../dist/js"),
         filename: "[name].js",
+        chunkFilename: '[name].js',
     },
     optimization: {
         splitChunks: {
             name: "vendor",
             chunks(chunk) {
               return chunk.name !== 'background';
-            }
+            },
         },
     },
     module: {
@@ -38,5 +40,6 @@ module.exports = {
             patterns: [{ from: ".", to: "../", context: "public" }],
             options: {},
         }),
+        // new BundleAnalyzerPlugin()
     ],
 };

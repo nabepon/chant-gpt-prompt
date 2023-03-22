@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
         "strict": true,
-        "module": "commonjs",
+        "module": "esnext",
+        "removeComments": false,
         "target": "es6",
         "esModuleInterop": true,
         "sourceMap": false,
