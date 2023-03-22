@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {PrismAsyncLight as SyntaxHighlighter} from "react-syntax-highlighter";
 import {darcula as codeStyle} from "react-syntax-highlighter/dist/esm/styles/prism";
 import React from "react";
 import {Spacer} from "../../utils/Spacer";
@@ -17,7 +17,7 @@ export const Markdown: React.FC<{ children: string }> = (props) => {
             const match = /language-(\w+)/.exec(className || '');
             const _children = String(children).replace(/^\n/, '').replace(/\n$/, '');
             return !inline ? (
-              <SyntaxHighlighter style={codeStyle as any} language={match?.[1]} {...props}>
+              <SyntaxHighlighter {...props} language={match?.[1] || ''} style={codeStyle}>
                 {_children}
               </SyntaxHighlighter>
             ) : (
