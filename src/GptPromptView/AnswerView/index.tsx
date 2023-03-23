@@ -18,12 +18,16 @@ export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
 
   const submitHandler = async (event?: React.FormEvent) => {
     event?.preventDefault();
-    if(!state.additionalChat || state.isLoading) return;
-    const chatLogs = [
-      ...state.chatLogs,
-      {role: 'user', content: state.additionalChat} as const,
-    ];
-    await onSubmit({ chatLogs });
+    if(state.isLoading) return;
+    if (!state.additionalChat) {
+      await onSubmit({ chatLogs: state.chatLogs });
+    } else {
+      const chatLogs = [
+        ...state.chatLogs,
+        {role: 'user', content: state.additionalChat} as const,
+      ];
+      await onSubmit({chatLogs});
+    }
   }
 
   return (

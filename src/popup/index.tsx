@@ -23,8 +23,7 @@ const Popup = () => {
     ref.current = true;
 
     Promise.all([
-      chrome.storage.session.setAccessLevel({ accessLevel: AccessLevel.TRUSTED_CONTEXTS }).then(async () => {
-        const { promptState } = await chrome.storage.session.get({ promptState: defaultState });
+      chrome.storage.local.get({ promptState: defaultState }).then(({ promptState }) => {
         const state = promptState as PromptState;
         if(state.isLoading && state.answer) {
           // TODO background で実行して止まらないようにしたい

@@ -3,6 +3,7 @@ import React, {useRef} from "react";
 import {defaultOptionsState, OptionsState} from "../popup/Options/useOptionsState";
 import {fetchCompletions} from "./fetchCompletions";
 import produce from 'immer';
+import AccessLevel = chrome.storage.AccessLevel;
 
 export type State = {
   tab: 'prompt' | 'answer';
@@ -44,7 +45,10 @@ const useRecoilStateWithSession = <T>(recoilState: RecoilState<T>) => {
   const setStateWithSession = (updater: (state: T) => T) => {
     setState((state) => {
       const newState = updater(state);
-      chrome.storage.session.set({ promptState: newState }).catch(() => {})
+      // TODO contentかpopupか見分けるためだけに使ってるので修正する
+      chrome.storage.session.setAccessLevel({ accessLevel: AccessLevel.TRUSTED_CONTEXTS }).then(() => {
+        chrome.storage.local.set({ promptState: newState }).catch(() => {})
+      })
       return newState;
     });
   }
