@@ -1,13 +1,14 @@
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
-import {defaultOptionsState, OptionsState, PromptOption} from "../popup/Options/useOptionsState";
+import {defaultOptionsState, OptionsState, PromptOption} from "../../popup/Options/useOptionsState";
 import produce from "immer";
-import {Spacer} from "../utils/Spacer";
+import {Spacer} from "../../utils/Spacer";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import {usePromptState} from "./usePromptState";
-import {enterSubmitHandler} from "./enterSubmitHandler";
+import {usePromptState} from "../usePromptState";
+import {enterSubmitHandler} from "../enterSubmitHandler";
+import {createId} from "../useHistoryState";
 
 const CustomInput = React.forwardRef((
   props: any,
@@ -24,7 +25,7 @@ const CustomInput = React.forwardRef((
         ...props.inputProps,
         'data-lpignore': true,
       }}
-      maxRows={4}
+      maxRows={3}
     />
   )
 });
@@ -38,7 +39,8 @@ export const PromptView: React.FC = () => {
       chatLogs: [
         {role: "system", content: state.prompt},
         {role: "user", content: state.context},
-      ]
+      ],
+      id: createId(),
     });
   }
 
@@ -87,8 +89,8 @@ export const PromptView: React.FC = () => {
         value={state.context}
         label="Context"
         multiline
-        minRows={3}
-        maxRows={11}
+        minRows={5}
+        maxRows={14}
         onChange={onChangeContext}
       />
       <Box sx={{ padding: '4px 0', display: 'flex', justifyContent: 'flex-end' }}>

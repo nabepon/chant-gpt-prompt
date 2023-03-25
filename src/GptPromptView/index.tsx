@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {usePromptState} from "./usePromptState";
+import {State, usePromptState} from "./usePromptState";
 import {PromptView} from "./PromptView";
 import {AnswerView} from "./AnswerView";
 import Box from "@mui/material/Box";
@@ -12,22 +12,22 @@ import CardContent from "@mui/material/CardContent";
 import {useMount} from "./useMount";
 import Draggable from "react-draggable";
 import Card from "@mui/material/Card";
+import {StatusButton} from "./StatusButton";
+import {HistoryView} from "./HistoryView";
+import {useHistoryState} from "./useHistoryState";
 
 export const GptPromptViewForContentScript: React.FC<{content: string; removeView: () => void}> = (props) => {
   const {state, setState} = usePromptState();
   const [isExpand, setIsExpand] = useState(true);
+  const {historyRecord, updateStatus} = useHistoryState();
 
   useMount(props.content);
 
   const toggleExpand = () => setIsExpand(state => !state)
-  const onClickPromptTab = () => {
+  const onClickTab = (tab: State['tab']) => () => {
     setIsExpand(true);
-    setState(state => ({...state, tab: 'prompt'}));
-  }
-  const onClickAnswerTab = () => {
-    setIsExpand(true);
-    setState(state => ({...state, tab: 'answer'}));
-  }
+    setState(state => ({...state, tab}));
+  };
 
   if(!state.isMounted) {
     return <div style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>loading...</div>
@@ -41,12 +41,27 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
       <div>
         <Card sx={{ minWidth: 256, width: 520, resize: 'horizontal' }}>
           <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }} onDoubleClick={toggleExpand}>
-            <Button size="small" onClick={onClickPromptTab} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
+            <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
               Prompt
             </Button>
-            <Button size="small" onClick={onClickAnswerTab} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
+            <Button size="small" onClick={onClickTab('answer')} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
               Chat
             </Button>
+            <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
+              History
+            </Button>
+            {state.id && (
+              <StatusButton
+                status={state.status}
+                onClick={() => {
+                  const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
+                  setState(state => ({...state, status}));
+                  const history = historyRecord.histories.find(history => history.id === state.id);
+                  if (!history) return;
+                  updateStatus(history);
+                }}
+              />
+            )}
             <IconButton onClick={toggleExpand}>
               <ArrowDropDown />
             </IconButton>
@@ -69,6 +84,11 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
                   <AnswerView />
                 </CardContent>
               )}
+              {state.tab === 'history' && (
+                <CardContent sx={{padding: '0!important'}}>
+                  <HistoryView />
+                </CardContent>
+              )}
             </>
           )}
         </Card>
@@ -79,11 +99,13 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
 
 export const GptPromptViewForPopup: React.FC = () => {
   const {state, setState} = usePromptState();
+  const {historyRecord, updateStatus} = useHistoryState();
 
   useMount(state.context);
 
-  const onClickPromptTab = () => setState(state => ({...state, tab: 'prompt'}))
-  const onClickAnswerTab = () => setState(state => ({...state, tab: 'answer'}))
+  const onClickTab = (tab: State['tab']) => () => {
+    setState(state => ({...state, tab}));
+  };
 
   if(!state.isMounted) {
     return <div style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>loading...</div>
@@ -95,12 +117,27 @@ export const GptPromptViewForPopup: React.FC = () => {
   return (
     <Card>
       <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }}>
-        <Button size="small" onClick={onClickPromptTab} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
+        <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
           Prompt
         </Button>
-        <Button size="small" onClick={onClickAnswerTab} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
+        <Button size="small" onClick={onClickTab('answer')} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
           Chat
         </Button>
+        <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
+          History
+        </Button>
+        {state.id && (
+          <StatusButton
+            status={state.status}
+            onClick={() => {
+              const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
+              setState(state => ({...state, status}));
+              const history = historyRecord.histories.find(history => history.id === state.id);
+              if (!history) return;
+              updateStatus(history);
+            }}
+          />
+        )}
       </Box>
       <Divider />
       {state.tab === 'prompt' && (
@@ -111,6 +148,11 @@ export const GptPromptViewForPopup: React.FC = () => {
       {state.tab === 'answer' && (
         <CardContent sx={{padding: '0!important'}}>
           <AnswerView fixedHeight />
+        </CardContent>
+      )}
+      {state.tab === 'history' && (
+        <CardContent sx={{padding: '0!important'}}>
+          <HistoryView />
         </CardContent>
       )}
     </Card>

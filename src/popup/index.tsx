@@ -10,7 +10,6 @@ import Tab from '@mui/material/Tab';
 import {Spacer} from "../utils/Spacer";
 import {Options} from "./Options";
 import {defaultOptionsState, OptionsState} from "./Options/useOptionsState";
-import AccessLevel = chrome.storage.AccessLevel;
 import {defaultState, promptStateAtom, State as PromptState} from "../GptPromptView/usePromptState";
 
 const Popup = () => {
@@ -70,7 +69,7 @@ const Popup = () => {
         >
           <Tab value="promptClient" label="client" />
           <Tab value="editPrompt" label="edit" />
-          <Tab value="history" label="history" />
+          {/*<Tab value="history" label="history" />*/}
           {/*<Tab value="donate" label="donate" />*/}
           <Tab value="options" label="config" />
         </Tabs>
@@ -85,7 +84,7 @@ const Popup = () => {
           <Spacer />
           {tab === 'promptClient' && <GptPromptViewForPopup />}
           {tab === 'editPrompt' && <EditPrompt />}
-          {tab === 'history' && <div style={{padding: '24px'}}>In development.</div>}
+          {/*{tab === 'history' && <div style={{padding: '24px'}}>In development.</div>}*/}
           {tab === 'options' && <Options />}
         </div>
       )}

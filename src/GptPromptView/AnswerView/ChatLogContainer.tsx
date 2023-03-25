@@ -3,6 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
 
 type Props = {
   copyText: string | null;
@@ -51,19 +52,23 @@ export const ChatLogContainer: React.FC<React.PropsWithChildren<Props>> = (
       {isActive && (
         <div style={{display: 'flex', justifyContent: 'flex-end'}}>
           <div style={{display: 'flex', position: 'fixed', top: '57px'}}>
-            <IconButton
-              style={{background: 'rgba(255, 255, 255, 1)'}}
-              onMouseUp={() => navigator.clipboard.writeText(copyText)}
-            >
-              <ContentCopy />
-            </IconButton>
+            <Box>
+              <IconButton
+                style={{background: 'rgba(255, 255, 255, 1)'}}
+                onMouseUp={() => navigator.clipboard.writeText(copyText)}
+              >
+                <ContentCopy />
+              </IconButton>
+            </Box>
             <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-            <IconButton
-              style={{background: 'rgba(255, 255, 255, 1)'}}
-              onMouseUp={onDelete}
-            >
-              <DeleteOutlineIcon />
-            </IconButton>
+            <Box>
+              <IconButton
+                style={{background: 'rgba(255, 255, 255, 1)'}}
+                onMouseUp={onDelete}
+              >
+                <DeleteOutlineIcon />
+              </IconButton>
+            </Box>
           </div>
         </div>
       )}

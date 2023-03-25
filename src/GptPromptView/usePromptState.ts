@@ -4,14 +4,19 @@ import {defaultOptionsState, OptionsState} from "../popup/Options/useOptionsStat
 import {fetchCompletions} from "./fetchCompletions";
 import produce from 'immer';
 import AccessLevel = chrome.storage.AccessLevel;
+import {createId, defaultHistoryState, History, HistoryState} from "./useHistoryState";
+
+export type ChatLog = {role: 'system' | 'user' | 'assistant', content: string};
+export type Status = 'none' | 'pinned' | 'archived';
 
 export type State = {
-  tab: 'prompt' | 'answer';
+  id: string | null;
+  tab: 'prompt' | 'answer' | 'history';
   prompt: string;
   context: string;
   answer: string;
   additionalChat: string;
-  chatLogs: {role: 'system' | 'user' | 'assistant', content: string}[];
+  chatLogs: ChatLog[];
   selectedChatIndex: number | null;
   promptOptions: OptionsState['promptOptions'];
   isLoading: boolean;
@@ -19,8 +24,10 @@ export type State = {
   isMounted: boolean;
   mountError: Error | null;
   abortController: AbortController;
+  status: Status
 }
 export const defaultState: State = {
+  id: null,
   tab: 'prompt',
   prompt: '',
   context: '',
@@ -34,21 +41,50 @@ export const defaultState: State = {
   isMounted: false,
   mountError: null,
   abortController: new AbortController(),
+  status: 'none'
 }
 export const promptStateAtom = atom<State>({
   key: '@GPTPromptView',
   default: defaultState,
 });
 
-const useRecoilStateWithSession = <T>(recoilState: RecoilState<T>) => {
+const useRecoilStateWithStorage = <T extends State>(recoilState: RecoilState<T>) => {
   const [state, setState] = useRecoilState(recoilState);
   const setStateWithSession = (updater: (state: T) => T) => {
     setState((state) => {
       const newState = updater(state);
+      if (!newState.id) {
+        return newState;
+      }
+      if(!newState.chatLogs.length) {
+        return newState;
+      }
+
       // TODO contentかpopupか見分けるためだけに使ってるので修正する
-      chrome.storage.session.setAccessLevel({ accessLevel: AccessLevel.TRUSTED_CONTEXTS }).then(() => {
-        chrome.storage.local.set({ promptState: newState }).catch(() => {})
-      })
+      chrome.storage.session.setAccessLevel({ accessLevel: AccessLevel.TRUSTED_CONTEXTS })
+        .then(() => true)
+        .catch(() => false)
+        .then(async (isPopup) => {
+          if(!newState.id) throw new Error('notfound id');
+          const {historyRecord} = await chrome.storage.local.get({ historyRecord: defaultHistoryState.historyRecord });
+          const histories = historyRecord?.histories as HistoryState['historyRecord']['histories'];
+          const history = histories.find(history => history.id === newState.id);
+          const newHistory: History = {
+            id: newState.id,
+            chatLogs: newState.chatLogs,
+            status: newState.status,
+            createdAt: Date.now(),
+          }
+          if (!history) {
+            histories.push(newHistory)
+          } else {
+            Object.assign(history, newHistory);
+          }
+          await chrome.storage.local.set({
+            historyRecord: {...historyRecord, histories},
+            ...(isPopup ? { promptState: newState } : {})
+          });
+        })
       return newState;
     });
   }
@@ -56,7 +92,7 @@ const useRecoilStateWithSession = <T>(recoilState: RecoilState<T>) => {
 }
 
 export const usePromptState = () => {
-  const [state, setState] = useRecoilStateWithSession(promptStateAtom);
+  const [state, setState] = useRecoilStateWithStorage(promptStateAtom);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -82,12 +118,13 @@ export const usePromptState = () => {
       _state.answer = '\n\n-STOP-\n';
     }))
   }
-  const onSubmit = async ({chatLogs}: { chatLogs: State['chatLogs'] }) => {
+  const onSubmit = async ({chatLogs, id}: { chatLogs: State['chatLogs'], id: string | null }) => {
     const _chatLogs = chatLogs.filter(chat => chat.content);
     try {
       const abortController = new AbortController();
       setState(state => ({
         ...state,
+        id,
         isLoading: true,
         tab: 'answer',
         additionalChat: '',
