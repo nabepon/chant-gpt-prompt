@@ -83,6 +83,7 @@ const useRecoilStateWithStorage = <T extends State>(recoilState: RecoilState<T>)
           } else {
             Object.assign(history, newHistory);
           }
+          // TODO 期限切れで消す処理, modifiedStatusAtを作る
           await chrome.storage.local.set({
             historyRecord: {...historyRecord, histories},
             ...(isPopup ? { promptState: newState } : {})
