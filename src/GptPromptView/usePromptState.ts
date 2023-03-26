@@ -4,7 +4,7 @@ import {defaultOptionsState, OptionsState} from "../popup/Options/useOptionsStat
 import {fetchCompletions} from "./fetchCompletions";
 import produce from 'immer';
 import AccessLevel = chrome.storage.AccessLevel;
-import {createId, defaultHistoryState, History, HistoryState} from "./useHistoryState";
+import {defaultHistoryState, History, HistoryState} from "./useHistoryState";
 
 export type ChatLog = {role: 'system' | 'user' | 'assistant', content: string};
 export type Status = 'none' | 'pinned' | 'archived';
@@ -24,7 +24,8 @@ export type State = {
   isMounted: boolean;
   mountError: Error | null;
   abortController: AbortController;
-  status: Status
+  status: Status;
+  updatedAt: number;
 }
 export const defaultState: State = {
   id: null,
@@ -41,7 +42,8 @@ export const defaultState: State = {
   isMounted: false,
   mountError: null,
   abortController: new AbortController(),
-  status: 'none'
+  status: 'none',
+  updatedAt: 0,
 }
 export const promptStateAtom = atom<State>({
   key: '@GPTPromptView',
@@ -74,6 +76,7 @@ const useRecoilStateWithStorage = <T extends State>(recoilState: RecoilState<T>)
             chatLogs: newState.chatLogs,
             status: newState.status,
             createdAt: Date.now(),
+            updatedAt: newState.updatedAt,
           }
           if (!history) {
             histories.push(newHistory)
@@ -131,6 +134,7 @@ export const usePromptState = () => {
         answer: '',
         chatLogs: _chatLogs,
         abortController,
+        updatedAt: Date.now(),
       }));
       scrollToBottom();
       const {options} = await chrome.storage.sync.get({options: defaultOptionsState}) || '';

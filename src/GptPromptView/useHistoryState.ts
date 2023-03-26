@@ -9,6 +9,7 @@ export type History = {
   chatLogs: ChatLog[];
   status: Status;
   createdAt: number;
+  updatedAt: number;
 }
 
 export type HistoryState = {
@@ -42,6 +43,7 @@ export const useHistoryState = () => {
         const target = _historyRecord?.histories.find(({id}) => id === history.id);
         if (!target) return;
         target.status = history.status === 'none' ? 'pinned' : history.status === 'pinned' ? 'archived' : 'none';
+        target.updatedAt = Date.now();
       });
       chrome.storage.local.set({ historyRecord: newHistoryRecord }).catch(console.error);
       return {...historyState, historyRecord: newHistoryRecord}
@@ -49,11 +51,7 @@ export const useHistoryState = () => {
   }
 
   return {
-    isLoading: state.isLoading,
-    setIsLoading: (isLoading: boolean) => setHistoryState(state => ({...state, isLoading})),
-    filterSetting: state.filterSetting,
-    setFilterSetting: (filterSetting: string) => setHistoryState(state => ({...state, filterSetting})),
-    historyRecord: state.historyRecord,
+    historyState: state,
     setHistoryState,
     updateStatus,
   }

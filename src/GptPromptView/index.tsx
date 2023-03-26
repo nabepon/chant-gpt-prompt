@@ -19,7 +19,7 @@ import {useHistoryState} from "./useHistoryState";
 export const GptPromptViewForContentScript: React.FC<{content: string; removeView: () => void}> = (props) => {
   const {state, setState} = usePromptState();
   const [isExpand, setIsExpand] = useState(true);
-  const {historyRecord, updateStatus} = useHistoryState();
+  const {historyState, updateStatus} = useHistoryState();
 
   useMount(props.content);
 
@@ -56,7 +56,7 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
                 onClick={() => {
                   const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
                   setState(state => ({...state, status}));
-                  const history = historyRecord.histories.find(history => history.id === state.id);
+                  const history = historyState.historyRecord.histories.find(history => history.id === state.id);
                   if (!history) return;
                   updateStatus(history);
                 }}
@@ -99,7 +99,7 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
 
 export const GptPromptViewForPopup: React.FC = () => {
   const {state, setState} = usePromptState();
-  const {historyRecord, updateStatus} = useHistoryState();
+  const {historyState, updateStatus} = useHistoryState();
 
   useMount(state.context);
 
@@ -132,7 +132,7 @@ export const GptPromptViewForPopup: React.FC = () => {
             onClick={() => {
               const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
               setState(state => ({...state, status}));
-              const history = historyRecord.histories.find(history => history.id === state.id);
+              const history = historyState.historyRecord.histories.find(history => history.id === state.id);
               if (!history) return;
               updateStatus(history);
             }}

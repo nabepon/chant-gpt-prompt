@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {defaultHistoryState, History, useHistoryState} from "../useHistoryState";
+import React, {useEffect} from "react";
+import {defaultHistoryState, History, HistoryState, useHistoryState} from "../useHistoryState";
 import Box from "@mui/material/Box";
 import {StatusButton} from "../StatusButton";
 import produce from 'immer';
@@ -14,13 +14,25 @@ import Divider from "@mui/material/Divider";
 import {Spacer} from "../../utils/Spacer";
 
 export const HistoryView: React.FC = () => {
-  const {isLoading, setIsLoading, filterSetting, setFilterSetting, historyRecord, setHistoryState, updateStatus} = useHistoryState();
+  const {historyState, setHistoryState, updateStatus} = useHistoryState();
 
   const {state, setState} = usePromptState();
   useEffect(() => {
     chrome.storage.local.get({ historyRecord: defaultHistoryState.historyRecord }).then(({historyRecord}) => {
-      setHistoryState(state => ({...state, historyRecord}))
-      setIsLoading(false);
+      const histories = (historyRecord as HistoryState['historyRecord']).histories.sort((a, b) => {
+        const aTime = a.updatedAt || 0;
+        const bTime = b.updatedAt || 0;
+        if (aTime < bTime) return -1;
+        if (aTime > bTime) return 1;
+        if (a.id < b.id) return 1;
+        if (a.id > b.id) return -1;
+        return 0;
+      });
+      setHistoryState(state => ({
+        ...state,
+        historyRecord: {...historyRecord, histories},
+        isLoading: false,
+      }))
     })
   }, []);
   const onClickStatus = (history: History) => {
@@ -30,6 +42,7 @@ export const HistoryView: React.FC = () => {
         return {
           ...state,
           status: history.status === 'none' ? 'pinned' : history.status === 'pinned' ? 'archived' : 'none',
+          updatedAt: Date.now(),
         }
       })
     }
@@ -57,17 +70,17 @@ export const HistoryView: React.FC = () => {
     }))
   }
   const filteredHistories = (() => {
-    if(!historyRecord || !historyRecord?.histories.length) {
+    if(!historyState.historyRecord || !historyState.historyRecord?.histories.length) {
       return []
     }
-    let histories = [...historyRecord.histories].reverse();
-    if (!filterSetting) {
+    let histories = [...historyState.historyRecord.histories].reverse();
+    if (!historyState.filterSetting) {
       return histories
     }
-    return histories.filter((history) => history.status === filterSetting);
+    return histories.filter((history) => history.status === historyState.filterSetting);
   })()
 
-  if(isLoading) {
+  if(historyState.isLoading) {
     return <Box sx={{padding: '20px'}}>loading...</Box>
   }
 
@@ -83,8 +96,8 @@ export const HistoryView: React.FC = () => {
               name: 'age',
               id: 'uncontrolled-native',
             }}
-            value={filterSetting}
-            onChange={(event) => setFilterSetting(event.target.value)}
+            value={historyState.filterSetting}
+            onChange={(event) => setHistoryState(state => ({...state, filterSetting: event.target.value}))}
           >
             <option value=""></option>
             <option value="none">none</option>
