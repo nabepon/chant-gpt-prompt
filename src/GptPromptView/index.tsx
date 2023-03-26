@@ -20,6 +20,7 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
   const {state, setState} = usePromptState();
   const [isExpand, setIsExpand] = useState(true);
   const {historyState, updateStatus} = useHistoryState();
+  const [zIndex, setZIndex] = useState(0);
 
   useMount(props.content);
 
@@ -37,63 +38,65 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
   }
 
   return (
-    <Draggable handle=".handle">
-      <div>
-        <Card sx={{ minWidth: 256, width: 520, resize: 'horizontal' }}>
-          <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }} onDoubleClick={toggleExpand}>
-            <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
-              Prompt
-            </Button>
-            <Button size="small" onClick={onClickTab('answer')} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
-              Chat
-            </Button>
-            <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
-              History
-            </Button>
-            {state.id && (
-              <StatusButton
-                status={state.status}
-                onClick={() => {
-                  const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
-                  setState(state => ({...state, status}));
-                  const history = historyState.historyRecord.histories.find(history => history.id === state.id);
-                  if (!history) return;
-                  updateStatus(history);
-                }}
-              />
-            )}
-            <IconButton onClick={toggleExpand}>
-              <ArrowDropDown />
-            </IconButton>
-            <Box sx={{ flexGrow: 1, justifyContent: 'end', display: 'flex' }}>
-              <IconButton onClick={props.removeView}>
-                <Close />
+    <Box onMouseDown={() => setZIndex(Number(Date.now().toString().slice(5, 10)))} sx={{ zIndex, position: 'relative' }}>
+      <Draggable handle=".handle">
+        <div>
+          <Card sx={{ minWidth: 256, width: 520, resize: 'horizontal' }}>
+            <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }} onDoubleClick={toggleExpand}>
+              <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
+                Prompt
+              </Button>
+              <Button size="small" onClick={onClickTab('answer')} variant={state.tab === 'answer' ? 'outlined' : 'text'}>
+                Chat
+              </Button>
+              <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
+                History
+              </Button>
+              {state.id && (
+                <StatusButton
+                  status={state.status}
+                  onClick={() => {
+                    const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
+                    setState(state => ({...state, status}));
+                    const history = historyState.historyRecord.histories.find(history => history.id === state.id);
+                    if (!history) return;
+                    updateStatus(history);
+                  }}
+                />
+              )}
+              <IconButton onClick={toggleExpand}>
+                <ArrowDropDown />
               </IconButton>
+              <Box sx={{ flexGrow: 1, justifyContent: 'end', display: 'flex' }}>
+                <IconButton onClick={props.removeView}>
+                  <Close />
+                </IconButton>
+              </Box>
             </Box>
-          </Box>
-          {isExpand && (
-            <>
-              <Divider />
-              {state.tab === 'prompt' && (
-                <CardContent sx={{ paddingBottom: '0!important' }}>
-                  <PromptView />
-                </CardContent>
-              )}
-              {state.tab === 'answer' && (
-                <CardContent sx={{padding: '0!important'}}>
-                  <AnswerView />
-                </CardContent>
-              )}
-              {state.tab === 'history' && (
-                <CardContent sx={{padding: '0!important'}}>
-                  <HistoryView />
-                </CardContent>
-              )}
-            </>
-          )}
-        </Card>
-      </div>
-    </Draggable>
+            {isExpand && (
+              <>
+                <Divider />
+                {state.tab === 'prompt' && (
+                  <CardContent sx={{ paddingBottom: '0!important' }}>
+                    <PromptView />
+                  </CardContent>
+                )}
+                {state.tab === 'answer' && (
+                  <CardContent sx={{padding: '0!important'}}>
+                    <AnswerView />
+                  </CardContent>
+                )}
+                {state.tab === 'history' && (
+                  <CardContent sx={{padding: '0!important'}}>
+                    <HistoryView />
+                  </CardContent>
+                )}
+              </>
+            )}
+          </Card>
+        </div>
+      </Draggable>
+    </Box>
   )
 }
 
