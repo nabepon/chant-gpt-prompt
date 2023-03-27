@@ -44,6 +44,7 @@ export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
           const isSelected = index === state.selectedChatIndex;
           return (
             <ChatLogContainer
+              key={index}
               style={{backgroundColor, padding: '8px 16px'}}
               copyText={log.content}
               isSelected={isSelected}
