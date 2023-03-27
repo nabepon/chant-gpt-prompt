@@ -3,7 +3,7 @@
 
   "name": "Chant-GPT_Prompt",
   "description": "ChatGPT Prompt Extension",
-  "version": "0.1.0",
+  "version": "0.2.0",
 
   "action": {
     "default_icon": "icon.png",
