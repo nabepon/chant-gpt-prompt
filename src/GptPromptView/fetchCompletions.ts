@@ -1,10 +1,11 @@
 type Message = { role: string; content: string | void };
 type Line = { delta: Message; finish_reason: string };
 export type MessageResult = {
+  finish_reason: string;
   role: string;
   content: string;
-  finish_reason: string;
   lines: Line[];
+  decoded: string;
 };
 export const fetchCompletions = async ({
   apiKey,
@@ -47,7 +48,7 @@ export const fetchCompletions = async ({
       if (!response?.body) return;
       const decoder = new TextDecoder();
       const reader = response.body.getReader();
-      const result = {
+      const result: MessageResult = {
         role: "",
         content: "",
         finish_reason: "",
@@ -93,7 +94,6 @@ export const fetchCompletions = async ({
             result.finish_reason = line.finish_reason;
           }
         });
-        result.content = result.content.replace(/^\n\n/, "");
 
         onMessage(result, { response, lines });
 

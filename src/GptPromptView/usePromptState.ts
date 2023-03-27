@@ -6,6 +6,7 @@ import {
 } from "../popup/Options/useOptionsState";
 import { fetchCompletions } from "./fetchCompletions";
 import produce from "immer";
+import {encode} from "@nem035/gpt-3-encoder";
 import AccessLevel = chrome.storage.AccessLevel;
 import { defaultHistoryState, History, HistoryState } from "./useHistoryState";
 
@@ -172,10 +173,11 @@ export const usePromptState = () => {
         model,
       }));
       scrollToBottom();
+      _chatLogs.forEach(chat => console.log(`tokens length ${encode(chat.content).length}`, {content: chat.content}));
       const { options } =
         (await chrome.storage.sync.get({ options: defaultOptionsState })) || "";
       let isStart = false;
-      await fetchCompletions({
+      const result = await fetchCompletions({
         apiKey: options.apiSecretKey,
         messages: _chatLogs,
         abortController,
@@ -184,12 +186,12 @@ export const usePromptState = () => {
             isStart = true;
             scrollToBottom();
           }
-          // console.log(result.content);
           setState((state) => ({ ...state, answer: result.content }));
         },
         model,
         models: state.models,
       });
+      console.log(`tokens length ${encode(result.content).length}`, result);
       setState((state) =>
         produce(state, (_state) => {
           _state.isLoading = false;
