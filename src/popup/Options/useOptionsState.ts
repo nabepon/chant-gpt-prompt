@@ -9,7 +9,7 @@ export type OptionsState = {
 export const defaultOptionsState: OptionsState = {
   apiSecretKey: '',
   promptOptions: [],
-  enableTextSelectionIcon: true,
+  enableTextSelectionIcon: false,
 }
 export const optionsStateAtom = atom<OptionsState>({
   key: '@GPTOptionsView/options',

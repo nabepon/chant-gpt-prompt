@@ -6,10 +6,16 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"],
   });
 });
-chrome.contextMenus.onClicked.addListener(async () => {
+
+const chantGptPrompt = async () => {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     const tabId = tabs[0]?.id;
     if(!tabId) return;
-    chrome.tabs.sendMessage(tabId, {});
+    chrome.tabs.sendMessage(tabId, { command: 'Chant-GPT_Prompt' });
   });
+}
+chrome.contextMenus.onClicked.addListener(chantGptPrompt);
+chrome.commands.onCommand.addListener(async (command) => {
+  if(command !== 'Chant-GPT_Prompt') return;
+  await chantGptPrompt()
 });

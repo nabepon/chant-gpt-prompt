@@ -3,7 +3,7 @@
 
   "name": "Chant-GPT_Prompt",
   "description": "ChatGPT Prompt Extension",
-  "version": "0.2.0",
+  "version": "0.3.0",
 
   "action": {
     "default_icon": "icon.png",
@@ -23,7 +23,20 @@
       }
   ],
 
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "commands": {
+    "Chant-GPT_Prompt": {
+      "suggested_key": {
+        "default": "Alt+P"
+      },
+      "description": "Launches the Chant GPT prompt"
+    }
+  },
   "permissions": [
-    "storage"
+    "storage",
+    "contextMenus",
+    "commands"
   ]
 }
