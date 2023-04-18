@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import {defaultOptionsState, OptionsState, PromptOption} from "../../popup/Options/useOptionsState";
@@ -9,6 +9,8 @@ import Button from "@mui/material/Button";
 import {usePromptState} from "../usePromptState";
 import {enterSubmitHandler} from "../enterSubmitHandler";
 import {createId} from "../useHistoryState";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 
 const CustomInput = React.forwardRef((
   props: any,
@@ -32,11 +34,25 @@ const CustomInput = React.forwardRef((
 
 export const PromptView: React.FC = () => {
   const {state, onSubmit, onChangePrompt, onChangeContext, abort} = usePromptState();
+  const [flip, setFlip] = useState<boolean>(false);
+
+  useEffect(() => {
+    chrome.storage.sync.get(
+      {options: defaultOptionsState},
+      (items) => {
+        setFlip(items.options.flipPromptAndContext);
+      }
+    );
+  }, []);
+
   const submitHandler = async (event?: React.FormEvent) => {
     event?.preventDefault();
     abort();
     await onSubmit({
-      chatLogs: [
+      chatLogs: flip ? [
+        {role: "user", content: state.context},
+        {role: "system", content: state.prompt},
+      ] : [
         {role: "system", content: state.prompt},
         {role: "user", content: state.context},
       ],
@@ -46,6 +62,20 @@ export const PromptView: React.FC = () => {
 
   return (
     <form onSubmit={submitHandler} onKeyDown={enterSubmitHandler(submitHandler)}>
+      {flip && (
+        <>
+          <TextField
+            fullWidth
+            value={state.context}
+            label="Context"
+            multiline
+            minRows={5}
+            maxRows={14}
+            onChange={onChangeContext}
+          />
+          <Spacer />
+        </>
+      )}
       <Autocomplete
         key="Autocomplete"
         freeSolo
@@ -83,17 +113,27 @@ export const PromptView: React.FC = () => {
           onChangePrompt(value)
         }}
       />
-      <Spacer />
-      <TextField
-        fullWidth
-        value={state.context}
-        label="Context"
-        multiline
-        minRows={5}
-        maxRows={14}
-        onChange={onChangeContext}
-      />
-      <Box sx={{ padding: '4px 0', display: 'flex', justifyContent: 'flex-end' }}>
+      {!flip && (
+        <>
+          <Spacer />
+          <TextField
+            fullWidth
+            value={state.context}
+            label="Context"
+            multiline
+            minRows={5}
+            maxRows={14}
+            onChange={onChangeContext}
+          />
+        </>
+      )}
+
+      <Box sx={{ padding: '4px 0', display: 'flex', justifyContent: 'space-between' }}>
+        <FormControlLabel
+          control={<Switch size="small" checked={flip} onChange={(_, value) => setFlip(value)} />}
+          label={'flip prompt'}
+          labelPlacement="start"
+        />
         <Button size="small" type="submit">New Chat</Button>
       </Box>
     </form>

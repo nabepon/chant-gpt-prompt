@@ -34,7 +34,7 @@ export const Options = () => {
   };
 
   return (
-    <Box sx={{ padding: '24px' }}>
+    <Box sx={{ padding: '0 24px' }}>
       <section>
         <h3>API Secret Key</h3>
         <ul style={{ paddingLeft: '20px', lineHeight: 1.45 }}>
@@ -70,6 +70,23 @@ export const Options = () => {
             />
           }
           label={options.enableTextSelectionIcon ? 'enabled' : 'disabled'}
+          labelPlacement="start"
+        />
+      </section>
+
+      <Spacer />
+      <section>
+        <h3>Flip Prompt and Context</h3>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={options.flipPromptAndContext}
+              onChange={(_, value) => {
+                setOptions(state => ({...state, flipPromptAndContext: value}));
+              }}
+            />
+          }
+          label={options.flipPromptAndContext ? 'after prompt' : 'before prompt'}
           labelPlacement="start"
         />
       </section>

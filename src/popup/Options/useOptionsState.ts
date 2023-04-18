@@ -5,11 +5,13 @@ export type OptionsState = {
   apiSecretKey: string,
   promptOptions: PromptOption[],
   enableTextSelectionIcon: boolean,
+  flipPromptAndContext: boolean,
 }
 export const defaultOptionsState: OptionsState = {
   apiSecretKey: '',
   promptOptions: [],
   enableTextSelectionIcon: false,
+  flipPromptAndContext: false,
 }
 export const optionsStateAtom = atom<OptionsState>({
   key: '@GPTOptionsView/options',
