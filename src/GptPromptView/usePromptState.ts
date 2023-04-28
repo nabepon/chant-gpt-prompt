@@ -26,6 +26,7 @@ export type State = {
   abortController: AbortController;
   status: Status;
   updatedAt: number;
+  model: string | undefined;
 }
 export const defaultState: State = {
   id: null,
@@ -44,6 +45,7 @@ export const defaultState: State = {
   abortController: new AbortController(),
   status: 'none',
   updatedAt: 0,
+  model: undefined,
 }
 export const promptStateAtom = atom<State>({
   key: '@GPTPromptView',
@@ -77,6 +79,7 @@ const useRecoilStateWithStorage = <T extends State>(recoilState: RecoilState<T>)
             status: newState.status,
             createdAt: Date.now(),
             updatedAt: newState.updatedAt,
+            model: newState.model,
           }
           if (!history) {
             histories.push(newHistory)
@@ -122,13 +125,20 @@ export const usePromptState = () => {
       _state.answer = '\n\n-STOP-\n';
     }))
   }
-  const onSubmit = async ({chatLogs, id}: { chatLogs: State['chatLogs'], id: string | null }) => {
+  type SubmitInput = {
+    chatLogs: State['chatLogs'],
+    id?: string | null,
+    model: string | undefined
+  };
+  const onSubmit = async ({chatLogs, id, model}: SubmitInput) => {
     const _chatLogs = chatLogs.filter(chat => chat.content);
     try {
       const abortController = new AbortController();
+      const createId = () => Date.now() + Math.random().toString(32).substring(1);
       setState(state => ({
         ...state,
-        id,
+        status: id ? state.status : defaultState.status,
+        id: id || createId(),
         isLoading: true,
         tab: 'answer',
         additionalChat: '',
@@ -136,6 +146,7 @@ export const usePromptState = () => {
         chatLogs: _chatLogs,
         abortController,
         updatedAt: Date.now(),
+        model,
       }));
       scrollToBottom();
       const {options} = await chrome.storage.sync.get({options: defaultOptionsState}) || '';
@@ -152,6 +163,7 @@ export const usePromptState = () => {
           console.log(result.content);
           setState(state => ({...state, answer: result.content}))
         },
+        model,
       });
       setState(state => produce(state, (_state) => {
         _state.isLoading = false;

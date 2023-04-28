@@ -8,9 +8,10 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {usePromptState} from "../usePromptState";
 import {enterSubmitHandler} from "../enterSubmitHandler";
-import {createId} from "../useHistoryState";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
+import FormControl from "@mui/material/FormControl";
+import NativeSelect from "@mui/material/NativeSelect";
 
 const CustomInput = React.forwardRef((
   props: any,
@@ -35,6 +36,7 @@ const CustomInput = React.forwardRef((
 export const PromptView: React.FC = () => {
   const {state, onSubmit, onChangePrompt, onChangeContext, abort} = usePromptState();
   const [flip, setFlip] = useState<boolean>(false);
+  const [model, setModel] = useState<string>();
 
   useEffect(() => {
     chrome.storage.sync.get(
@@ -56,7 +58,7 @@ export const PromptView: React.FC = () => {
         {role: "system", content: state.prompt},
         {role: "user", content: state.context},
       ],
-      id: createId(),
+      model,
     });
   }
 
@@ -128,12 +130,22 @@ export const PromptView: React.FC = () => {
         </>
       )}
 
-      <Box sx={{ padding: '4px 0', display: 'flex', justifyContent: 'space-between' }}>
+      <Box sx={{ padding: '4px 0', display: 'flex' }}>
         <FormControlLabel
+          sx={{flexGrow: 1, justifyContent: 'flex-end'}}
           control={<Switch size="small" checked={flip} onChange={(_, value) => setFlip(value)} />}
           label={'flip prompt'}
           labelPlacement="start"
         />
+        <FormControl size="small" sx={{display: 'flex', justifyContent: 'center'}}>
+          <NativeSelect
+            value={model}
+            onChange={(event) => setModel(event.target.value)}
+          >
+            <option>gpt-3.5-turbo</option>
+            <option>gpt-4</option>
+          </NativeSelect>
+        </FormControl>
         <Button size="small" type="submit">New Chat</Button>
       </Box>
     </form>

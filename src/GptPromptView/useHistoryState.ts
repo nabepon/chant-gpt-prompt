@@ -2,14 +2,13 @@ import {ChatLog, State, Status} from "./usePromptState";
 import {atom, useRecoilState} from "recoil";
 import produce from "immer";
 
-export const createId = () => Date.now() + Math.random().toString(32).substring(1);
-
 export type History = {
   id: string;
   chatLogs: ChatLog[];
   status: Status;
   createdAt: number;
   updatedAt: number;
+  model?: string | undefined;
 }
 
 export type HistoryState = {
@@ -36,13 +35,14 @@ export const historyStateAtom = atom<HistoryState>({
 export const useHistoryState = () => {
   const [state, setHistoryState] = useRecoilState(historyStateAtom);
 
-  const updateStatus = (history: History) => {
+  const updateStatus = (history: History, model: string | undefined) => {
     setHistoryState(historyState => {
       const historyRecord = historyState.historyRecord;
       const newHistoryRecord = produce(historyRecord, (_historyRecord) => {
         const target = _historyRecord?.histories.find(({id}) => id === history.id);
         if (!target) return;
         target.status = history.status === 'none' ? 'pinned' : history.status === 'pinned' ? 'archived' : 'none';
+        target.model = model;
         target.updatedAt = Date.now();
       });
       chrome.storage.local.set({ historyRecord: newHistoryRecord }).catch(console.error);

@@ -12,7 +12,6 @@ import Divider from "@mui/material/Divider";
 import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 import CircularProgress from '@mui/material/CircularProgress';
-import {createId} from "../useHistoryState";
 
 export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
   const {state, setState, stopAnswer,  onChangeAdditionalChat, onSubmit, scrollContainerRef} = usePromptState();
@@ -21,13 +20,13 @@ export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
     event?.preventDefault();
     if(state.isLoading) return;
     if (!state.additionalChat) {
-      await onSubmit({ chatLogs: state.chatLogs, id: state.id || createId()});
+      await onSubmit({ chatLogs: state.chatLogs, id: state.id, model: state.model});
     } else {
       const chatLogs = [
         ...state.chatLogs,
         {role: 'user', content: state.additionalChat} as const,
       ];
-      await onSubmit({chatLogs, id: state.id || createId()});
+      await onSubmit({chatLogs, id: state.id, model: state.model});
     }
   }
 

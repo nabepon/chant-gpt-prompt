@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {defaultHistoryState, History, HistoryState, useHistoryState} from "../useHistoryState";
 import Box from "@mui/material/Box";
-import {StatusButton} from "../StatusButton";
+import {StatusIconButton} from "../StatusIconButton";
 import produce from 'immer';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import IconButton from "@mui/material/IconButton";
@@ -36,7 +36,7 @@ export const HistoryView: React.FC = () => {
     })
   }, []);
   const onClickStatus = (history: History) => {
-    updateStatus(history);
+    updateStatus(history, state.model);
     if (state.id === history.id) {
       setState(state => {
         return {
@@ -62,6 +62,7 @@ export const HistoryView: React.FC = () => {
     setState((state) => ({
       ...state,
       ...history,
+      model: history.model,
       answer: '',
       additionalChat: '',
       selectedChatIndex: null,
@@ -88,14 +89,8 @@ export const HistoryView: React.FC = () => {
     <Box>
       <Box sx={{ margin: '4px 0 0 16px' }}>
         <FormControl>
-          <InputLabel variant="standard" htmlFor="uncontrolled-native">
-            status
-          </InputLabel>
+          <InputLabel variant="standard">status</InputLabel>
           <NativeSelect
-            inputProps={{
-              name: 'age',
-              id: 'uncontrolled-native',
-            }}
             value={historyState.filterSetting}
             onChange={(event) => setHistoryState(state => ({...state, filterSetting: event.target.value}))}
           >
@@ -126,7 +121,7 @@ export const HistoryView: React.FC = () => {
             return (
               <Box component="li" sx={{display: 'flex', padding: '8px 0', borderBottom: '1px solid #dcdcdc'}} key={history.id}>
                 <Box>
-                  <StatusButton
+                  <StatusIconButton
                     status={history.status}
                     onClick={() => onClickStatus(history)}
                   />

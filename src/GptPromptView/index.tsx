@@ -12,9 +12,11 @@ import CardContent from "@mui/material/CardContent";
 import {useMount} from "./useMount";
 import Draggable from "react-draggable";
 import Card from "@mui/material/Card";
-import {StatusButton} from "./StatusButton";
+import FormControl from "@mui/material/FormControl";
+import {StatusIconButton} from "./StatusIconButton";
 import {HistoryView} from "./HistoryView";
 import {useHistoryState} from "./useHistoryState";
+import NativeSelect from "@mui/material/NativeSelect";
 
 export const GptPromptViewForContentScript: React.FC<{content: string; removeView: () => void}> = (props) => {
   const {state, setState} = usePromptState();
@@ -42,7 +44,7 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
       <Draggable handle=".handle">
         <div>
           <Card sx={{ minWidth: 256, width: 520, resize: 'horizontal' }}>
-            <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }} onDoubleClick={toggleExpand}>
+            <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px', minHeight: '37px' }} onDoubleClick={toggleExpand}>
               <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
                 Prompt
               </Button>
@@ -52,17 +54,11 @@ export const GptPromptViewForContentScript: React.FC<{content: string; removeVie
               <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
                 History
               </Button>
-              {state.id && (
-                <StatusButton
-                  status={state.status}
-                  onClick={() => {
-                    const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
-                    setState(state => ({...state, status}));
-                    const history = historyState.historyRecord.histories.find(history => history.id === state.id);
-                    if (!history) return;
-                    updateStatus(history);
-                  }}
-                />
+              {state.tab === 'answer' && (
+                <>
+                  <StatusButton state={state} setState={setState} historyState={historyState} updateStatus={updateStatus}/>
+                  <SelectModel state={state} setState={setState} historyState={historyState} updateStatus={updateStatus}/>
+                </>
               )}
               <IconButton onClick={toggleExpand}>
                 <ArrowDropDown />
@@ -119,7 +115,7 @@ export const GptPromptViewForPopup: React.FC = () => {
 
   return (
     <Card>
-      <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px' }}>
+      <Box className="handle" sx={{ display: 'flex', paddingLeft: '4px', minHeight: '37px' }}>
         <Button size="small" onClick={onClickTab('prompt')} variant={state.tab === 'prompt' ? 'outlined' : 'text'}>
           Prompt
         </Button>
@@ -129,17 +125,11 @@ export const GptPromptViewForPopup: React.FC = () => {
         <Button size="small" onClick={onClickTab('history')} variant={state.tab === 'history' ? 'outlined' : 'text'}>
           History
         </Button>
-        {state.id && (
-          <StatusButton
-            status={state.status}
-            onClick={() => {
-              const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
-              setState(state => ({...state, status}));
-              const history = historyState.historyRecord.histories.find(history => history.id === state.id);
-              if (!history) return;
-              updateStatus(history);
-            }}
-          />
+        {state.tab === 'answer' && (
+          <>
+            <StatusButton state={state} setState={setState} historyState={historyState} updateStatus={updateStatus}/>
+            <SelectModel state={state} setState={setState} historyState={historyState} updateStatus={updateStatus}/>
+          </>
         )}
       </Box>
       <Divider />
@@ -159,5 +149,50 @@ export const GptPromptViewForPopup: React.FC = () => {
         </CardContent>
       )}
     </Card>
+  )
+}
+
+const StatusButton: React.FC<{
+  state: ReturnType<typeof usePromptState>['state'];
+  setState: ReturnType<typeof usePromptState>['setState'];
+  historyState: ReturnType<typeof useHistoryState>['historyState'];
+  updateStatus: ReturnType<typeof useHistoryState>['updateStatus'];
+}> = ({state, setState, historyState, updateStatus}) => {
+  return (
+    <StatusIconButton
+      status={state.status}
+      onClick={() => {
+        const status = state.status === 'none' ? 'pinned' : state.status === 'pinned' ? 'archived' : 'none';
+        setState(state => ({...state, status}));
+        const history = historyState.historyRecord.histories.find(history => history.id === state.id);
+        if (!history) return;
+        updateStatus(history, state.model);
+      }}
+    />
+  )
+}
+
+const SelectModel: React.FC<{
+  state: ReturnType<typeof usePromptState>['state'];
+  setState: ReturnType<typeof usePromptState>['setState'];
+  historyState: ReturnType<typeof useHistoryState>['historyState'];
+  updateStatus: ReturnType<typeof useHistoryState>['updateStatus'];
+}> = ({state, setState, historyState, updateStatus}) => {
+  return (
+    <FormControl size="small" sx={{display: 'flex', justifyContent: 'center'}}>
+      <NativeSelect
+        value={state.model}
+        onChange={(event) => {
+          const model = event.target.value || undefined;
+          setState(state => ({...state, model}));
+          const history = historyState.historyRecord.histories.find(history => history.id === state.id);
+          if (!history) return;
+          updateStatus(history, model);
+        }}
+      >
+        <option>gpt-3.5-turbo</option>
+        <option>gpt-4</option>
+      </NativeSelect>
+    </FormControl>
   )
 }
