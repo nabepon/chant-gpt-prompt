@@ -1,6 +1,6 @@
 {
   "name": "chant-gpt-prompt",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "ChatGPT Prompt Extension",
   "main": "index.js",
   "scripts": {

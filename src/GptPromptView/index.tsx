@@ -190,8 +190,7 @@ const SelectModel: React.FC<{
           updateStatus(history, model);
         }}
       >
-        <option>gpt-3.5-turbo</option>
-        <option>gpt-4</option>
+        {state.models.map(model => <option>{model}</option>)}
       </NativeSelect>
     </FormControl>
   )

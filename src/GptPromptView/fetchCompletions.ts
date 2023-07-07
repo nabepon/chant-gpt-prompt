@@ -14,12 +14,14 @@ export const fetchCompletions = async (
     abortController,
     onMessage,
     model,
+    models,
   }: {
     apiKey: string,
     messages: Message[],
     abortController: AbortController,
     onMessage: (result: MessageResult, meta: any) => void,
-    model: string | undefined
+    model: string | undefined,
+    models: string[],
   }
 ) => {
   const config = {
@@ -29,7 +31,7 @@ export const fetchCompletions = async (
       "content-type": "application/json",
     },
     body: JSON.stringify({
-      model: model || "gpt-3.5-turbo",
+      model: model || models[0],
       messages,
       stream: true,
     }),

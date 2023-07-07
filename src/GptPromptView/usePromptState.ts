@@ -27,6 +27,7 @@ export type State = {
   status: Status;
   updatedAt: number;
   model: string | undefined;
+  models: string[];
 }
 export const defaultState: State = {
   id: null,
@@ -46,6 +47,7 @@ export const defaultState: State = {
   status: 'none',
   updatedAt: 0,
   model: undefined,
+  models: ['gpt-3.5-turbo', 'gpt-4'],
 }
 export const promptStateAtom = atom<State>({
   key: '@GPTPromptView',
@@ -164,6 +166,7 @@ export const usePromptState = () => {
           setState(state => ({...state, answer: result.content}))
         },
         model,
+        models: state.models,
       });
       setState(state => produce(state, (_state) => {
         _state.isLoading = false;

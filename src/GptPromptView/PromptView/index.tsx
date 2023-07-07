@@ -142,8 +142,7 @@ export const PromptView: React.FC = () => {
             value={model}
             onChange={(event) => setModel(event.target.value)}
           >
-            <option>gpt-3.5-turbo</option>
-            <option>gpt-4</option>
+            {state.models.map(model => <option>{model}</option>)}
           </NativeSelect>
         </FormControl>
         <Button size="small" type="submit">New Chat</Button>
