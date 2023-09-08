@@ -1,46 +1,45 @@
-import React, {useEffect} from "react";
-import {Spacer} from "../../utils/Spacer";
-import {defaultOptionsState, useOptionsState} from "./useOptionsState";
-import {wait} from "../../utils/wait";
+import React, { useEffect } from "react";
+import { Spacer } from "../../utils/Spacer";
+import { defaultOptionsState, useOptionsState } from "./useOptionsState";
+import { wait } from "../../utils/wait";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const Options = () => {
-  const {options, setOptions, state, setState} = useOptionsState();
+  const { options, setOptions, state, setState } = useOptionsState();
 
   useEffect(() => {
-    chrome.storage.sync.get(
-      {options: defaultOptionsState},
-      (items) => {
-        setOptions(state => ({...state, ...items.options}));
-      }
-    );
+    chrome.storage.sync.get({ options: defaultOptionsState }, (items) => {
+      setOptions((state) => ({ ...state, ...items.options }));
+    });
   }, []);
 
   const saveOptions = () => {
-    chrome.storage.sync.set(
-      {options},
-      async () => {
-        setState(state => ({...state, status: 'Options saved.'}));
-        await chrome.runtime.sendMessage({message: "updateOptions"});
-        const id = await wait(1000);
-        setState(state => ({...state, status: ''}));
-        return () => clearTimeout(id);
-      }
-    );
+    chrome.storage.sync.set({ options }, async () => {
+      setState((state) => ({ ...state, status: "Options saved." }));
+      await chrome.runtime.sendMessage({ message: "updateOptions" });
+      const id = await wait(1000);
+      setState((state) => ({ ...state, status: "" }));
+      return () => clearTimeout(id);
+    });
   };
 
   return (
-    <Box sx={{ padding: '0 24px' }}>
+    <Box sx={{ padding: "0 24px" }}>
       <section>
         <h3>API Secret Key</h3>
-        <ul style={{ paddingLeft: '20px', lineHeight: 1.45 }}>
+        <ul style={{ paddingLeft: "20px", lineHeight: 1.45 }}>
           <li>
             <span>Login to OpenAI </span>
-            <a href="https://platform.openai.com/account/api-keys" target="_blank">API key page</a>
+            <a
+              href="https://platform.openai.com/account/api-keys"
+              target="_blank"
+            >
+              API key page
+            </a>
           </li>
           <li>Click "Create new secret key" button</li>
           <li>Enter the generated key below</li>
@@ -49,10 +48,13 @@ export const Options = () => {
         <TextField
           label="API key"
           type="password"
-          sx={{width: 360}}
+          sx={{ width: 360 }}
           value={options.apiSecretKey}
           onChange={(event) => {
-            setOptions(state => ({...state, apiSecretKey: event.target.value}));
+            setOptions((state) => ({
+              ...state,
+              apiSecretKey: event.target.value,
+            }));
           }}
         />
       </section>
@@ -65,11 +67,14 @@ export const Options = () => {
             <Switch
               checked={options.enableTextSelectionIcon}
               onChange={(_, value) => {
-                setOptions(state => ({...state, enableTextSelectionIcon: value}));
+                setOptions((state) => ({
+                  ...state,
+                  enableTextSelectionIcon: value,
+                }));
               }}
             />
           }
-          label={options.enableTextSelectionIcon ? 'enabled' : 'disabled'}
+          label={options.enableTextSelectionIcon ? "enabled" : "disabled"}
           labelPlacement="start"
         />
       </section>
@@ -82,22 +87,29 @@ export const Options = () => {
             <Switch
               checked={options.flipPromptAndContext}
               onChange={(_, value) => {
-                setOptions(state => ({...state, flipPromptAndContext: value}));
+                setOptions((state) => ({
+                  ...state,
+                  flipPromptAndContext: value,
+                }));
               }}
             />
           }
-          label={options.flipPromptAndContext ? 'after prompt' : 'before prompt'}
+          label={
+            options.flipPromptAndContext ? "after prompt" : "before prompt"
+          }
           labelPlacement="start"
         />
       </section>
 
       <Spacer height={32} />
       <section>
-        <div style={{ display: 'flex', alignItems: 'center'}}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <div>
-            <Button onClick={saveOptions} variant="contained">Save</Button>
+            <Button onClick={saveOptions} variant="contained">
+              Save
+            </Button>
           </div>
-          <div style={{ marginLeft: '12px' }}>{state.status}</div>
+          <div style={{ marginLeft: "12px" }}>{state.status}</div>
         </div>
       </section>
     </Box>

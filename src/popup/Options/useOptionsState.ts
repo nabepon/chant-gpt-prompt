@@ -1,30 +1,30 @@
-import {atom, useRecoilState} from "recoil";
+import { atom, useRecoilState } from "recoil";
 
-export type PromptOption = {id: number; value: string; updatedAt: number}
+export type PromptOption = { id: number; value: string; updatedAt: number };
 export type OptionsState = {
-  apiSecretKey: string,
-  promptOptions: PromptOption[],
-  enableTextSelectionIcon: boolean,
-  flipPromptAndContext: boolean,
-}
+  apiSecretKey: string;
+  promptOptions: PromptOption[];
+  enableTextSelectionIcon: boolean;
+  flipPromptAndContext: boolean;
+};
 export const defaultOptionsState: OptionsState = {
-  apiSecretKey: '',
+  apiSecretKey: "",
   promptOptions: [],
   enableTextSelectionIcon: false,
   flipPromptAndContext: false,
-}
+};
 export const optionsStateAtom = atom<OptionsState>({
-  key: '@GPTOptionsView/options',
+  key: "@GPTOptionsView/options",
   default: defaultOptionsState,
 });
 
 type State = {
-  status: string,
-}
+  status: string;
+};
 export const stateAtom = atom<State>({
-  key: '@GPTOptionsView/state',
+  key: "@GPTOptionsView/state",
   default: {
-    status: '',
+    status: "",
   },
 });
 
@@ -37,5 +37,5 @@ export const useOptionsState = () => {
     setOptions,
     state,
     setState,
-  }
-}
+  };
+};

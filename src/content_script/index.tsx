@@ -1,4 +1,8 @@
-import {addContextMenuAndCommand, addIconEvent, addPrevent} from "./addIconEvent";
+import {
+  addContextMenuAndCommand,
+  addIconEvent,
+  addPrevent,
+} from "./addIconEvent";
 
 addPrevent();
 addIconEvent();

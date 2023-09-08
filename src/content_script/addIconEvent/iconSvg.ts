@@ -12,4 +12,4 @@ export const iconSvg = `
         <tspan>C</tspan>
     </text>
 </svg>
-`
+`;
