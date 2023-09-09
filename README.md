@@ -1,6 +1,11 @@
 # Chant-GPT_Prompt
 
-Chrome Extension
+ChatGPT を呼び出す Chrome Extension
+
+https://chrome.google.com/webstore/detail/pnlepcahiadlbcjgikjinjgbdgeflhdf
+
+https://www.youtube.com/watch?v=fddlVKo-iQ4
+
 
 ## Setup
 
@@ -12,12 +17,4 @@ npm install
 
 ```
 npm run build
-```
-
-## Build in watch mode
-
-### terminal
-
-```
-npm run watch
 ```
