@@ -18,7 +18,7 @@ import NativeSelect from "@mui/material/NativeSelect";
 import Divider from "@mui/material/Divider";
 import { Spacer } from "../../utils/Spacer";
 
-export const HistoryView: React.FC = () => {
+export const HistoryView: React.FC<{ fixedHeight?: boolean }> = (props) => {
   const { historyState, setHistoryState, updateStatus } = useHistoryState();
 
   const { state, setState } = usePromptState();
@@ -134,7 +134,11 @@ export const HistoryView: React.FC = () => {
       {!filteredHistories.length && (
         <Box sx={{ padding: "20px" }}>not exist</Box>
       )}
-      <Box sx={{ overflowY: "scroll", maxHeight: "400px" }}>
+      <Box sx={
+        props.fixedHeight
+          ? { overflowY: "scroll", maxHeight: "calc(100vh - 175px)", minHeight: "calc(100vh - 175px)" }
+          : { overflowY: "scroll", maxHeight: "400px" }
+      }>
         <Box component="ul" sx={{ padding: "0 12px" }}>
           {filteredHistories.map((history) => {
             const mergedLog: any = history.chatLogs

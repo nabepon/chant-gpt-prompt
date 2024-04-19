@@ -73,7 +73,7 @@ const Popup = () => {
 
   return (
     <div>
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", width: "100%", minWidth: "784px" }}>
         <Tabs
           value={tab}
           onChange={(_, tab) => {
@@ -92,14 +92,14 @@ const Popup = () => {
         </Tabs>
       </div>
       {!state.isMounted ? (
-        <div style={{ width: "784px", height: "522px" }}>
+        <div style={{ width: "100%", minWidth: "784px", height: "522px" }}>
           <Spacer />
           <div>
             <pre>loading...</pre>
           </div>
         </div>
       ) : (
-        <div style={{ width: "784px", height: "522px" }}>
+        <div style={{ width: "100%", minWidth: "784px", height: "522px" }}>
           <Spacer />
           {tab === "promptClient" && <GptPromptViewForPopup />}
           {tab === "editPrompt" && <EditPrompt />}

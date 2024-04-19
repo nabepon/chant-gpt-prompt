@@ -12,7 +12,7 @@ export const fetchModels = async (apiKey: string): Promise<string[]> => {
       },
     }).then((response) => response.json());
     const models = (result.data as any[]).flatMap((item) =>
-      item.id.startsWith("gpt") && !item.id.match(/\d{4}$/) ? [item.id] : []
+      item.id.startsWith("gpt") && !item.id.match(/instruct/) && !item.id.match(/vision/) ? [item.id] : []
     );
     return models.sort((a, b) => {
       if (a === "gpt-3.5-turbo") return -1;

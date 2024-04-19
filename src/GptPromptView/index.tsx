@@ -107,7 +107,9 @@ export const GptPromptViewForContentScript: React.FC<{
               <>
                 <Divider />
                 {state.tab === "prompt" && (
-                  <CardContent sx={{ paddingBottom: "0!important" }}>
+                  <CardContent sx={{
+                    paddingBottom: "0!important",
+                  }}>
                     <PromptView />
                   </CardContent>
                 )}
@@ -198,8 +200,8 @@ export const GptPromptViewForPopup: React.FC = () => {
         <CardContent
           sx={{
             paddingBottom: "12px!important",
-            maxHeight: "450px",
-            minHeight: "450px",
+            maxHeight: "calc(100vh - 141px)",
+            minHeight: "calc(100vh - 141px)",
           }}
         >
           <PromptView />
@@ -212,7 +214,7 @@ export const GptPromptViewForPopup: React.FC = () => {
       )}
       {state.tab === "history" && (
         <CardContent sx={{ padding: "0!important" }}>
-          <HistoryView />
+          <HistoryView fixedHeight />
         </CardContent>
       )}
     </Card>

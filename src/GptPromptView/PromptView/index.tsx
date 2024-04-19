@@ -36,7 +36,7 @@ const CustomInput = React.forwardRef(
   }
 );
 
-export const PromptView: React.FC = () => {
+export const PromptView: React.FC<{ fixedHeight?: boolean }> = () => {
   const { state, onSubmit, onChangePrompt, onChangeContext, abort } =
     usePromptState();
   const [flip, setFlip] = useState<boolean>(false);
