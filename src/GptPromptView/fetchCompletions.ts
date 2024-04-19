@@ -70,7 +70,7 @@ export const fetchCompletions = async ({
 
         try {
           lines = decoded.split("\n\n").flatMap((item) => {
-            const line = item.replace(/^data: /, "");
+            const line = item.trim().replace(/^data: /, "");
             if (!item || line === "[DONE]") return [];
             return JSON.parse(line).choices;
           });
