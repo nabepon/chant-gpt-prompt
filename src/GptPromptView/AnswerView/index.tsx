@@ -47,7 +47,7 @@ export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
         ref={scrollContainerRef}
         style={{
           position: "relative",
-          maxHeight: "calc(100vh - 187px)",
+          maxHeight: props.fixedHeight ? "calc(100vh - 187px)" : "400px",
           minHeight: props.fixedHeight || state.isLoading ? "calc(100vh - 187px)" : "0",
           overflowY: "scroll",
         }}
