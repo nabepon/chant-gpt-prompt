@@ -48,7 +48,9 @@ export const AnswerView: React.FC<{ fixedHeight?: boolean }> = (props) => {
         style={{
           position: "relative",
           maxHeight: props.fixedHeight ? "calc(100vh - 187px)" : "400px",
-          minHeight: props.fixedHeight || state.isLoading ? "calc(100vh - 187px)" : "0",
+          minHeight: props.fixedHeight
+            ? "calc(100vh - 187px)"
+            : state.isLoading ?　"400px" : "0",
           overflowY: "scroll",
         }}
       >
