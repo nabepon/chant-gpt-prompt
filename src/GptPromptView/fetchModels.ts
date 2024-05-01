@@ -11,14 +11,20 @@ export const fetchModels = async (apiKey: string): Promise<string[]> => {
         authorization: `Bearer ${apiKey}`,
       },
     }).then((response) => response.json());
-    const models = (result.data as any[]).flatMap((item) =>
+    return (result.data as any[]).sort((a, b) => {
+      if(defaultState.models.includes(a.id) && defaultState.models.includes(b.id)) {
+        return a.created > b.created ? -1 : 1;
+      }
+      if(defaultState.models.includes(a.id)) {
+        return -1;
+      }
+      if(defaultState.models.includes(b.id)) {
+        return 1;
+      }
+      return a.created > b.created ? -1 : 1;
+    }).flatMap((item) =>
       item.id.startsWith("gpt") && !item.id.match(/instruct/) && !item.id.match(/vision/) ? [item.id] : []
     );
-    return models.sort((a, b) => {
-      if (a === "gpt-3.5-turbo") return -1;
-      if (b === "gpt-3.5-turbo") return 1;
-      return a > b ? 1 : -1;
-    });
   } catch (err) {
     console.error(err);
     return defaultState.models;

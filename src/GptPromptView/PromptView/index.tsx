@@ -37,10 +37,9 @@ const CustomInput = React.forwardRef(
 );
 
 export const PromptView: React.FC<{ fixedHeight?: boolean }> = () => {
-  const { state, onSubmit, onChangePrompt, onChangeContext, abort } =
+  const { state, onSubmit, onChangePrompt, onChangeContext, onChangeModel, abort } =
     usePromptState();
   const [flip, setFlip] = useState<boolean>(false);
-  const [model, setModel] = useState<string>();
 
   useEffect(() => {
     chrome.storage.sync.get({ options: defaultOptionsState }, (items) => {
@@ -61,7 +60,7 @@ export const PromptView: React.FC<{ fixedHeight?: boolean }> = () => {
             { role: "system", content: state.prompt },
             { role: "user", content: state.context },
           ],
-      model,
+      model: state.model,
     });
   };
 
@@ -162,8 +161,8 @@ export const PromptView: React.FC<{ fixedHeight?: boolean }> = () => {
           sx={{ display: "flex", justifyContent: "center" }}
         >
           <NativeSelect
-            value={model}
-            onChange={(event) => setModel(event.target.value)}
+            value={state.model}
+            onChange={onChangeModel}
           >
             {state.models.map((model) => (
               <option>{model}</option>

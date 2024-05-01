@@ -53,7 +53,7 @@ export const defaultState: State = {
   status: "none",
   updatedAt: 0,
   model: undefined,
-  models: ["gpt-3.5-turbo", "gpt-4"],
+  models: ["gpt-4-turbo", "gpt-3.5-turbo", "gpt-4"],
 };
 export const promptStateAtom = atom<State>({
   key: "@GPTPromptView",
@@ -130,6 +130,9 @@ export const usePromptState = () => {
   };
   const onChangeContext = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setState((state) => ({ ...state, context: event.target.value }));
+  };
+  const onChangeModel = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setState((state) => ({ ...state, model: event.target.value }));
   };
   const abort = () => {
     return state.abortController?.abort?.();
@@ -220,6 +223,7 @@ export const usePromptState = () => {
     onSubmit,
     onChangePrompt,
     onChangeContext,
+    onChangeModel,
     abort,
     stopAnswer,
     onChangeAdditionalChat,
