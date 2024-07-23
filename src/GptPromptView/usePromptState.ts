@@ -53,7 +53,7 @@ export const defaultState: State = {
   status: "none",
   updatedAt: 0,
   model: undefined,
-  models: ["gpt-4-turbo", "gpt-3.5-turbo", "gpt-4"],
+  models: [],
 };
 export const promptStateAtom = atom<State>({
   key: "@GPTPromptView",

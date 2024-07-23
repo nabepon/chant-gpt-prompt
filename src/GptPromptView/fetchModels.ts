@@ -1,8 +1,11 @@
 import { defaultState } from "./usePromptState";
 
 export const fetchModels = async (apiKey: string): Promise<string[]> => {
+  const staticConfig = await fetch('https://nabepon.github.io/Chant-GPT.config.json').then(res => res.json())
+  const defaultModels = [staticConfig.defaultModel, ...defaultState.models]
+
   if (!apiKey) {
-    return defaultState.models;
+    return defaultModels;
   }
   try {
     const result = await fetch("https://api.openai.com/v1/models", {
@@ -10,15 +13,16 @@ export const fetchModels = async (apiKey: string): Promise<string[]> => {
       headers: {
         authorization: `Bearer ${apiKey}`,
       },
-    }).then((response) => response.json());
+    }).then(res => res.json());
+
     return (result.data as any[]).sort((a, b) => {
-      if(defaultState.models.includes(a.id) && defaultState.models.includes(b.id)) {
+      if(defaultModels.includes(a.id) && defaultModels.includes(b.id)) {
         return a.created > b.created ? -1 : 1;
       }
-      if(defaultState.models.includes(a.id)) {
+      if(defaultModels.includes(a.id)) {
         return -1;
       }
-      if(defaultState.models.includes(b.id)) {
+      if(defaultModels.includes(b.id)) {
         return 1;
       }
       return a.created > b.created ? -1 : 1;
@@ -27,6 +31,6 @@ export const fetchModels = async (apiKey: string): Promise<string[]> => {
     );
   } catch (err) {
     console.error(err);
-    return defaultState.models;
+    return defaultModels;
   }
 };

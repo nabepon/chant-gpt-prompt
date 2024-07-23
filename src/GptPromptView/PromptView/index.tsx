@@ -156,19 +156,21 @@ export const PromptView: React.FC<{ fixedHeight?: boolean }> = () => {
           label={"flip prompt"}
           labelPlacement="start"
         />
-        <FormControl
-          size="small"
-          sx={{ display: "flex", justifyContent: "center" }}
-        >
-          <NativeSelect
-            value={state.model}
-            onChange={onChangeModel}
+        {Boolean(state.models.length) && (
+          <FormControl
+            size="small"
+            sx={{ display: "flex", justifyContent: "center" }}
           >
-            {state.models.map((model) => (
-              <option>{model}</option>
-            ))}
-          </NativeSelect>
-        </FormControl>
+            <NativeSelect
+              value={state.model}
+              onChange={onChangeModel}
+            >
+              {state.models.map((model) => (
+                <option>{model}</option>
+              ))}
+            </NativeSelect>
+          </FormControl>
+        )}
         <Button size="small" type="submit">
           New Chat
         </Button>
